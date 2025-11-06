@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react';
-import { Leaf, Snowflake, Sun, CloudRain, User, Calendar, Target, Heart, Apple } from 'lucide-react';
+import { Leaf, Snowflake, Sun, CloudRain, User, Calendar, Target, Heart, Apple, Menu, X } from 'lucide-react';
 
 interface Meal {
   desayuno: string;
@@ -47,6 +47,7 @@ const MealPlanner = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [season, setSeason] = useState<Season>('primavera');
   const [currentView, setCurrentView] = useState<string>('home');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     edad: '',
     sexo: '',
@@ -274,24 +275,31 @@ type Season = 'primavera' | 'verano' | 'otono' | 'invierno';
     setCurrentView('plan');
   };
 
+  const handleNavClick = (view: string) => {
+    setCurrentView(view);
+    setMobileMenuOpen(false);
+  };
+
 type Day = 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes' | 'sabado' | 'domingo';
 
   const dias: Day[] = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
 
   const NavigationBar = () => (
     <nav className="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center justify-between h-20">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => setCurrentView('home')}>
-            <div className="bg-emerald-100 p-2 rounded-lg">
-              <Apple className="w-7 h-7 text-emerald-600" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="flex items-center justify-between h-16 md:h-20">
+          {/* Logo */}
+          <div className="flex items-center gap-2 sm:gap-3 cursor-pointer" onClick={() => handleNavClick('home')}>
+            <div className="bg-emerald-100 p-1.5 sm:p-2 rounded-lg">
+              <Apple className="w-5 h-5 sm:w-7 sm:h-7 text-emerald-600" />
             </div>
-            <span className="text-2xl font-light text-slate-800">
+            <span className="text-xl sm:text-2xl font-light text-slate-800">
               Nutri<span className="font-semibold text-emerald-600">Plan</span>
             </span>
           </div>
 
-          <div className="flex items-center gap-8">
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center gap-8">
             <button
               onClick={() => setCurrentView('about')}
               className={`text-sm font-medium uppercase tracking-wide transition-colors ${
@@ -323,31 +331,82 @@ type Day = 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes' | 'sabado' | 
               Contacto
             </button>
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors"
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? (
+              <X className="w-6 h-6 text-slate-600" />
+            ) : (
+              <Menu className="w-6 h-6 text-slate-600" />
+            )}
+          </button>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-slate-200 py-4 space-y-2">
+            <button
+              onClick={() => handleNavClick('about')}
+              className={`block w-full text-left px-4 py-3 rounded-lg text-sm font-medium uppercase tracking-wide transition-colors ${
+                currentView === 'about'
+                  ? 'bg-emerald-50 text-emerald-600'
+                  : 'text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              Sobre Nosotros
+            </button>
+            <button
+              onClick={() => profile ? handleNavClick('plan') : handleNavClick('home')}
+              className={`block w-full text-left px-4 py-3 rounded-lg text-sm font-medium uppercase tracking-wide transition-colors ${
+                profile
+                  ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                  : currentView === 'plan'
+                  ? 'bg-emerald-50 text-emerald-600'
+                  : 'text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              Mi Plan
+            </button>
+            <button
+              onClick={() => handleNavClick('contact')}
+              className={`block w-full text-left px-4 py-3 rounded-lg text-sm font-medium uppercase tracking-wide transition-colors ${
+                currentView === 'contact'
+                  ? 'bg-emerald-50 text-emerald-600'
+                  : 'text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              Contacto
+            </button>
+          </div>
+        )}
       </div>
     </nav>
   );
 
   const AboutPage = () => (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-emerald-50 py-16 px-6">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-emerald-50 py-8 sm:py-16 px-4 sm:px-6">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-light text-slate-800 mb-4">
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="text-3xl sm:text-5xl font-light text-slate-800 mb-4">
             Sobre <span className="font-semibold text-emerald-600">Nosotros</span>
           </h1>
         </div>
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-12">
-          <p className="text-lg text-slate-600 leading-relaxed mb-6">
+        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-100 p-6 sm:p-12">
+          <p className="text-base sm:text-lg text-slate-600 leading-relaxed mb-6">
             En NutriPlan creemos que una alimentacion saludable debe estar en armonia con las estaciones del ano. 
             Nuestro enfoque se basa en aprovechar los alimentos de temporada para crear planes nutricionales 
             personalizados que se adaptan a tus objetivos.
           </p>
-          <p className="text-lg text-slate-600 leading-relaxed mb-6">
+          <p className="text-base sm:text-lg text-slate-600 leading-relaxed mb-6">
             Cada estacion nos ofrece productos frescos y nutritivos que no solo benefician tu salud, sino tambien 
             el medio ambiente. Con nuestros planes personalizados, obtendras recetas variadas y equilibradas 
             disenadas especificamente para ti.
           </p>
-          <p className="text-lg text-slate-600 leading-relaxed">
+          <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
             Nuestro sistema calcula tus necesidades caloricas basandose en tu perfil y objetivos, asegurando 
             que cada comida te acerque a tu meta de forma saludable y sostenible.
           </p>
@@ -357,29 +416,25 @@ type Day = 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes' | 'sabado' | 
   );
 
   const ContactPage = () => (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-emerald-50 py-16 px-6">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-emerald-50 py-8 sm:py-16 px-4 sm:px-6">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-light text-slate-800 mb-4">
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="text-3xl sm:text-5xl font-light text-slate-800 mb-4">
             <span className="font-semibold text-emerald-600">Contacto</span>
           </h1>
         </div>
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-12">
-          <div className="space-y-8">
+        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-100 p-6 sm:p-12">
+          <div className="space-y-6 sm:space-y-8">
             <div>
-              <h3 className="text-xl font-semibold text-slate-800 mb-2">Email</h3>
-              <p className="text-lg text-slate-600">info@nutriplan.com</p>
+              <h3 className="text-lg sm:text-xl font-semibold text-slate-800 mb-2">Email</h3>
+              <p className="text-base sm:text-lg text-slate-600">info@nutriplan.com</p>
             </div>
             <div>
-              <h3 className="text-xl font-semibold text-slate-800 mb-2">Telefono</h3>
-              <p className="text-lg text-slate-600">+34 900 123 456</p>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold text-slate-800 mb-2">Horario</h3>
-              <p className="text-lg text-slate-600">Lunes a Viernes: 9:00 - 18:00</p>
+              <h3 className="text-lg sm:text-xl font-semibold text-slate-800 mb-2">Horario</h3>
+              <p className="text-base sm:text-lg text-slate-600">Lunes a Viernes: 9:00 - 18:00</p>
             </div>
             <div className="pt-6 border-t border-slate-100">
-              <p className="text-slate-600 leading-relaxed">
+              <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
                 Tienes alguna pregunta sobre nuestros planes nutricionales? No dudes en contactarnos. 
                 Estaremos encantados de ayudarte a comenzar tu viaje hacia una alimentacion mas saludable.
               </p>
@@ -391,10 +446,10 @@ type Day = 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes' | 'sabado' | 
   );
 
   const Footer = () => (
-    <footer className="bg-slate-100 text-slate-700 mt-20 border-t border-slate-200">
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="grid md:grid-cols-4 gap-8 mb-8">
-          <div className="md:col-span-1">
+    <footer className="bg-slate-100 text-slate-700 mt-8 sm:mt-12 border-t border-slate-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
+          <div className="sm:col-span-2 md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
               <div className="bg-emerald-600 p-2 rounded-lg">
                 <Apple className="w-6 h-6 text-white" />
@@ -412,23 +467,23 @@ type Day = 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes' | 'sabado' | 
             <h3 className="text-slate-800 font-semibold mb-4 uppercase tracking-wide text-sm">Enlaces</h3>
             <ul className="space-y-2">
               <li>
-                <button onClick={() => setCurrentView('home')} className="text-sm hover:text-emerald-600 transition-colors">
+                <button onClick={() => handleNavClick('home')} className="text-sm hover:text-emerald-600 transition-colors">
                   Inicio
                 </button>
               </li>
               <li>
-                <button onClick={() => setCurrentView('about')} className="text-sm hover:text-emerald-600 transition-colors">
+                <button onClick={() => handleNavClick('about')} className="text-sm hover:text-emerald-600 transition-colors">
                   Sobre Nosotros
                 </button>
               </li>
               <li>
-                <button onClick={() => setCurrentView('contact')} className="text-sm hover:text-emerald-600 transition-colors">
+                <button onClick={() => handleNavClick('contact')} className="text-sm hover:text-emerald-600 transition-colors">
                   Contacto
                 </button>
               </li>
               <li>
                 <button 
-                  onClick={() => profile ? setCurrentView('plan') : setCurrentView('home')} 
+                  onClick={() => profile ? handleNavClick('plan') : handleNavClick('home')} 
                   className="text-sm hover:text-emerald-600 transition-colors"
                 >
                   Mi Plan
@@ -467,23 +522,19 @@ type Day = 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes' | 'sabado' | 
             <h3 className="text-slate-800 font-semibold mb-4 uppercase tracking-wide text-sm">Contacto</h3>
             <ul className="space-y-2 text-sm">
               <li className="flex items-start gap-2">
-                <span className="text-emerald-600 mt-1">Email:</span>
+                <span className="text-emerald-600 mt-1 font-medium">Email:</span>
                 <span>info@nutriplan.com</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-emerald-600 mt-1">Tel:</span>
-                <span>+34 900 123 456</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-emerald-600 mt-1">Lugar:</span>
+                <span className="text-emerald-600 mt-1 font-medium">Lugar:</span>
                 <span>Barcelona, Espana</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-slate-300 pt-8">
-          <p className="text-sm text-slate-600 text-center">
+        <div className="border-t border-slate-300 pt-6 sm:pt-8">
+          <p className="text-xs sm:text-sm text-slate-600 text-center">
             2024 NutriPlan. Todos los derechos reservados.
           </p>
         </div>
@@ -493,52 +544,52 @@ type Day = 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes' | 'sabado' | 
 
   if (!profile) {
     return (
-      <div>
+      <div className="min-h-screen bg-white flex flex-col">
         <NavigationBar />
         {currentView === 'home' && (
-          <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-emerald-50 py-16 px-6">
+          <div className="flex-grow min-h-screen bg-gradient-to-b from-emerald-50 via-white to-emerald-50 py-8 sm:py-16 px-4 sm:px-6">
             <div className="max-w-5xl mx-auto">
-              <div className="text-center mb-16">
-                <div className="flex justify-center mb-6">
-                  <div className="bg-emerald-100 p-4 rounded-full">
-                    <Apple className="w-16 h-16 text-emerald-600" />
+              <div className="text-center mb-8 sm:mb-16">
+                <div className="flex justify-center mb-4 sm:mb-6">
+                  <div className="bg-emerald-100 p-3 sm:p-4 rounded-full">
+                    <Apple className="w-12 h-12 sm:w-16 sm:h-16 text-emerald-600" />
                   </div>
                 </div>
-                <h1 className="text-5xl font-light text-slate-800 mb-4">
+                <h1 className="text-3xl sm:text-5xl font-light text-slate-800 mb-3 sm:mb-4 px-4">
                   Plan Nutricional <span className="font-semibold text-emerald-600">Personalizado</span>
                 </h1>
-                <p className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
+                <p className="text-base sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed px-4">
                   Descubre tu plan de alimentacion ideal adaptado a tus objetivos y a las estaciones del ano
                 </p>
               </div>
 
-              <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-12 max-w-3xl mx-auto">
-                <div className="flex items-center mb-8 pb-6 border-b border-slate-100">
-                  <User className="w-8 h-8 text-emerald-600 mr-4" />
-                  <h2 className="text-3xl font-light text-slate-800">Tu Perfil</h2>
+              <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-100 p-6 sm:p-12 max-w-3xl mx-auto">
+                <div className="flex items-center mb-6 sm:mb-8 pb-4 sm:pb-6 border-b border-slate-100">
+                  <User className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-600 mr-3 sm:mr-4 flex-shrink-0" />
+                  <h2 className="text-2xl sm:text-3xl font-light text-slate-800">Tu Perfil</h2>
                 </div>
                 
-                <div className="space-y-8">
-                  <div className="grid md:grid-cols-2 gap-8">
+                <div className="space-y-6 sm:space-y-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-3 uppercase tracking-wide">Edad</label>
+                      <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-2 sm:mb-3 uppercase tracking-wide">Edad</label>
                       <input
                         type="number"
                         value={formData.edad}
                         onChange={(e) => handleInputChange('edad', e.target.value)}
                         min="15"
                         max="100"
-                        className="w-full px-5 py-4 border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none transition-all text-lg"
+                        className="w-full px-4 sm:px-5 py-3 sm:py-4 border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none transition-all text-base sm:text-lg"
                         placeholder="30"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-3 uppercase tracking-wide">Sexo</label>
+                      <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-2 sm:mb-3 uppercase tracking-wide">Sexo</label>
                       <select
                         value={formData.sexo}
                         onChange={(e) => handleInputChange('sexo', e.target.value)}
-                        className="w-full px-5 py-4 border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none transition-all text-lg"
+                        className="w-full px-4 sm:px-5 py-3 sm:py-4 border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none transition-all text-base sm:text-lg"
                       >
                         <option value="">Seleccionar</option>
                         <option value="hombre">Hombre</option>
@@ -547,22 +598,22 @@ type Day = 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes' | 'sabado' | 
                     </div>
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-3 uppercase tracking-wide">Altura (cm)</label>
+                      <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-2 sm:mb-3 uppercase tracking-wide">Altura (cm)</label>
                       <input
                         type="number"
                         value={formData.altura}
                         onChange={(e) => handleInputChange('altura', e.target.value)}
                         min="120"
                         max="250"
-                        className="w-full px-5 py-4 border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none transition-all text-lg"
+                        className="w-full px-4 sm:px-5 py-3 sm:py-4 border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none transition-all text-base sm:text-lg"
                         placeholder="170"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-3 uppercase tracking-wide">Peso Actual (kg)</label>
+                      <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-2 sm:mb-3 uppercase tracking-wide">Peso Actual (kg)</label>
                       <input
                         type="number"
                         value={formData.peso}
@@ -570,14 +621,14 @@ type Day = 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes' | 'sabado' | 
                         min="30"
                         max="300"
                         step="0.1"
-                        className="w-full px-5 py-4 border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none transition-all text-lg"
+                        className="w-full px-4 sm:px-5 py-3 sm:py-4 border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none transition-all text-base sm:text-lg"
                         placeholder="75.5"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-3 uppercase tracking-wide">Peso Objetivo (kg)</label>
+                    <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-2 sm:mb-3 uppercase tracking-wide">Peso Objetivo (kg)</label>
                     <input
                       type="number"
                       value={formData.pesoObjetivo}
@@ -585,14 +636,14 @@ type Day = 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes' | 'sabado' | 
                       min="30"
                       max="300"
                       step="0.1"
-                      className="w-full px-5 py-4 border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none transition-all text-lg"
+                      className="w-full px-4 sm:px-5 py-3 sm:py-4 border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none transition-all text-base sm:text-lg"
                       placeholder="70"
                     />
                   </div>
 
                   <button
                     onClick={handleSubmit}
-                    className="w-full bg-emerald-600 text-white font-medium py-5 rounded-xl hover:bg-emerald-700 transition-all duration-300 shadow-lg shadow-emerald-200 text-lg mt-4"
+                    className="w-full bg-emerald-600 text-white font-medium py-4 sm:py-5 rounded-xl hover:bg-emerald-700 transition-all duration-300 shadow-lg shadow-emerald-200 text-base sm:text-lg mt-4"
                   >
                     Crear Mi Plan Personalizado
                   </button>
@@ -609,26 +660,26 @@ type Day = 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes' | 'sabado' | 
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-white flex flex-col">
       <NavigationBar />
-      <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-emerald-50 py-12 px-6">
+      <div className="flex-grow min-h-screen bg-gradient-to-b from-emerald-50 via-white to-emerald-50 py-6 sm:py-12 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 mb-12">
-            <div className="flex flex-wrap items-center justify-between gap-6">
+          <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-100 p-4 sm:p-8 mb-6 sm:mb-12">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
               <div>
-                <h1 className="text-4xl font-light text-slate-800 mb-3">
+                <h1 className="text-2xl sm:text-4xl font-light text-slate-800 mb-2 sm:mb-3">
                   Tu Plan <span className="font-semibold text-emerald-600">Nutricional</span>
                 </h1>
-                <div className="flex flex-wrap items-center gap-6 text-slate-600">
+                <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-6 text-slate-600">
                   <div className="flex items-center gap-2">
-                    <Heart className="w-5 h-5 text-emerald-600" />
-                    <span className="text-lg">
+                    <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                    <span className="text-base sm:text-lg">
                       <span className="font-semibold text-emerald-600">{profile.calorias}</span> kcal/dia
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Target className="w-5 h-5 text-emerald-600" />
-                    <span className="text-lg">
+                    <Target className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                    <span className="text-base sm:text-lg">
                       {profile.peso} kg - <span className="font-semibold text-emerald-600">{profile.pesoObjetivo} kg</span>
                     </span>
                   </div>
@@ -636,70 +687,72 @@ type Day = 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes' | 'sabado' | 
               </div>
               <button
                 onClick={() => setProfile(null)}
-                className="px-6 py-3 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 font-medium transition-colors"
+                className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 font-medium transition-colors text-sm sm:text-base"
               >
                 Modificar Perfil
               </button>
             </div>
           </div>
 
-          <div className="mb-12">
-            <h2 className="text-2xl font-light text-slate-800 text-center mb-8">
+          <div className="mb-8 sm:mb-12">
+            <h2 className="text-xl sm:text-2xl font-light text-slate-800 text-center mb-6 sm:mb-8">
               Selecciona tu <span className="font-semibold text-emerald-600">Estacion</span>
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
               {(['primavera', 'verano', 'otono', 'invierno'] as Season[]).map((s) => (
                 <button
                   key={s}
                   onClick={() => setSeason(s)}
-                  className={`p-8 rounded-2xl border-2 transition-all duration-300 ${
+                  className={`p-4 sm:p-8 rounded-xl sm:rounded-2xl border-2 transition-all duration-300 ${
                     season === s
                       ? seasonActiveColors[s] + ' shadow-lg'
                       : seasonColors[s] + ' hover:shadow-md'
                   }`}
                 >
-                  <div className="flex flex-col items-center gap-3">
-                    {seasonIcons[s]}
-                    <span className="font-medium capitalize text-lg">{s}</span>
+                  <div className="flex flex-col items-center gap-2 sm:gap-3">
+                    <div className="[&>svg]:w-6 [&>svg]:h-6 sm:[&>svg]:w-8 sm:[&>svg]:h-8">
+                      {seasonIcons[s]}
+                    </div>
+                    <span className="font-medium capitalize text-sm sm:text-lg">{s}</span>
                   </div>
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {dias.map((dia) => (
-              <div key={dia} className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow">
-                <div className="bg-gradient-to-r from-emerald-50 to-teal-50 px-8 py-5 border-b border-slate-100">
-                  <div className="flex items-center gap-3">
-                    <Calendar className="w-6 h-6 text-emerald-600" />
-                    <h3 className="text-2xl font-light text-slate-800 capitalize">
+              <div key={dia} className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow">
+                <div className="bg-gradient-to-r from-emerald-50 to-teal-50 px-4 sm:px-8 py-3 sm:py-5 border-b border-slate-100">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
+                    <h3 className="text-xl sm:text-2xl font-light text-slate-800 capitalize">
                       <span className="font-semibold">{dia.charAt(0).toUpperCase() + dia.slice(1)}</span>
                     </h3>
                   </div>
                 </div>
                 
-                <div className="p-8 grid md:grid-cols-3 gap-8">
+                <div className="p-4 sm:p-8 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
                   <div>
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-2 mb-2 sm:mb-3">
                       <div className="w-2 h-2 rounded-full bg-amber-500"></div>
-                      <h4 className="font-semibold text-slate-700 uppercase tracking-wide text-sm">Desayuno</h4>
+                      <h4 className="font-semibold text-slate-700 uppercase tracking-wide text-xs sm:text-sm">Desayuno</h4>
                     </div>
-                    <p className="text-slate-600 leading-relaxed">{seasonalMeals[season][dia].desayuno}</p>
+                    <p className="text-sm sm:text-base text-slate-600 leading-relaxed">{seasonalMeals[season][dia].desayuno}</p>
                   </div>
                   <div>
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-2 mb-2 sm:mb-3">
                       <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-                      <h4 className="font-semibold text-slate-700 uppercase tracking-wide text-sm">Comida</h4>
+                      <h4 className="font-semibold text-slate-700 uppercase tracking-wide text-xs sm:text-sm">Comida</h4>
                     </div>
-                    <p className="text-slate-600 leading-relaxed">{seasonalMeals[season][dia].comida}</p>
+                    <p className="text-sm sm:text-base text-slate-600 leading-relaxed">{seasonalMeals[season][dia].comida}</p>
                   </div>
                   <div>
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-2 mb-2 sm:mb-3">
                       <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
-                      <h4 className="font-semibold text-slate-700 uppercase tracking-wide text-sm">Cena</h4>
+                      <h4 className="font-semibold text-slate-700 uppercase tracking-wide text-xs sm:text-sm">Cena</h4>
                     </div>
-                    <p className="text-slate-600 leading-relaxed">{seasonalMeals[season][dia].cena}</p>
+                    <p className="text-sm sm:text-base text-slate-600 leading-relaxed">{seasonalMeals[season][dia].cena}</p>
                   </div>
                 </div>
               </div>
