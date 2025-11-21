@@ -845,7 +845,7 @@ type Day = 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes' | 'sabado' | 
 	  
 	  {/* Componente de Lista de Compras */}
  
-{console.log('🔍 Renderizando ShoppingList, season:', season)}
+
 
 	  
 	  
