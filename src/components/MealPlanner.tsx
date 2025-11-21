@@ -846,16 +846,7 @@ type Day = 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes' | 'sabado' | 
 	  {/* Componente de Lista de Compras */}
  
 {console.log('🔍 Renderizando ShoppingList, season:', season)}
-<ShoppingList 
-  categorizedList={shoppingListHook.categorizedList}
-  isOpen={shoppingListHook.isOpen}
-  setIsOpen={shoppingListHook.setIsOpen}
-  toggleItem={shoppingListHook.toggleItem}
-  toggleAll={shoppingListHook.toggleAll}
-  clearChecked={shoppingListHook.clearChecked}
-  clearAll={shoppingListHook.clearAll}
-  stats={shoppingListHook.stats}
-/>
+
 	  
 	  
       <BottomNavigation />
